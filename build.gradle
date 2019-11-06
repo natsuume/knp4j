@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+}
+
+group 'dev.natsuume.knp4j'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.12
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
+
+    compile group: 'com.google.flogger', name: 'flogger', version: '0.4'
+    runtime group: 'com.google.flogger', name: 'flogger-system-backend', version: '0.4'
+}
+
+checkstyle {
+    toolVersion = '8.24'
+    configFile = rootProject.file('.idea/google-java-format.xml')
+    configProperties = [
+            'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
+    ]
+    ignoreFailures = false
+    showViolations = true
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+    workingDir rootDir
+}
