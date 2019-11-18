@@ -1,5 +1,6 @@
 package dev.natsuume.knp4j.process;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -74,7 +75,7 @@ public class ProcessManager<InputT, OutputT> {
    * @return プロセスの処理結果
    * @throws InterruptedException 待機中に割り込みが発生した場合
    */
-  public OutputT exec(InputT input) throws InterruptedException {
+  public OutputT exec(InputT input) throws InterruptedException, IOException {
     var processExecutor = processExecutors.take();
     var result = processExecutor.exec(input);
     processExecutors.put(processExecutor);
