@@ -1,6 +1,5 @@
 package dev.natsuume.knp4j.process;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
@@ -13,20 +12,20 @@ public class ProcessStreamReader {
   ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public ProcessStreamReader(InputStream inputStream) {
-    var processStreamThread = new ProcessStreamThread(inputStream, this::updateStreamLines);
+    var processStreamThread = new ProcessStreamThread(inputStream, this::putStreamLines);
     executorService.execute(processStreamThread);
   }
 
-  private void updateStreamLines(List<String> streamLines) {
-    try{
-      processStreamLines.put(streamLines);
-    }catch (InterruptedException e){
-      e.printStackTrace();
-    }
+  public List<String> getStreamLines() throws InterruptedException {
+    return processStreamLines.take();
   }
 
-  public List<String> getStreamLines() throws InterruptedException{
-    return processStreamLines.take();
+  private void putStreamLines(List<String> streamLines) {
+    try {
+      processStreamLines.put(streamLines);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   public boolean isEmpty() {

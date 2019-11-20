@@ -16,8 +16,8 @@ public class ProcessManager<InputT, OutputT> {
   private final int maxProcessNum;
   private final Supplier<ProcessExecutor<InputT, OutputT>> processSupplier;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
-
   private final BlockingDeque<ProcessExecutor<InputT, OutputT>> processExecutors;
+  private int runningProcessNum;
 
   /**
    * constructor.
@@ -31,22 +31,24 @@ public class ProcessManager<InputT, OutputT> {
   /**
    * constructor.
    *
-   * @param maxProcessNum   同時に実行する最大プロセス数(n > 0)
+   * @param maxProcessNum 同時に実行する最大プロセス数(n > 0)
    * @param processSupplier 実行するプロセスのSupplier
    */
-  public ProcessManager(int maxProcessNum,
-      Supplier<ProcessExecutor<InputT, OutputT>> processSupplier) {
+  public ProcessManager(
+      int maxProcessNum, Supplier<ProcessExecutor<InputT, OutputT>> processSupplier) {
     this(maxProcessNum, DEFAULT_FIRST_PROCESS_NUM, processSupplier);
   }
 
   /**
    * constructor.
    *
-   * @param maxProcessNum   同時に実行する最大プロセス数(n > 0)
+   * @param maxProcessNum 同時に実行する最大プロセス数(n > 0)
    * @param firstProcessNum インスタンス生成時に実行するプロセス数(0 < n < maxProcessNum)
    * @param processSupplier 実行するプロセスのSupplier
    */
-  public ProcessManager(int maxProcessNum, int firstProcessNum,
+  public ProcessManager(
+      int maxProcessNum,
+      int firstProcessNum,
       Supplier<ProcessExecutor<InputT, OutputT>> processSupplier) {
     this.processSupplier = processSupplier;
     this.maxProcessNum = maxProcessNum;
@@ -61,11 +63,13 @@ public class ProcessManager<InputT, OutputT> {
 
     this.processExecutors = new LinkedBlockingDeque<>(maxProcessNum);
 
-    var processes = IntStream
-        .range(0, firstProcessNum)
-        .mapToObj(i -> processSupplier.get())
-        .collect(Collectors.toList());
+    var processes =
+        IntStream.range(0, firstProcessNum)
+            .mapToObj(i -> processSupplier.get())
+            .collect(Collectors.toList());
     processExecutors.addAll(processes);
+
+    this.runningProcessNum = firstProcessNum;
   }
 
   /**
@@ -76,10 +80,23 @@ public class ProcessManager<InputT, OutputT> {
    * @throws InterruptedException 待機中に割り込みが発生した場合
    */
   public OutputT exec(InputT input) throws InterruptedException, IOException {
-    var processExecutor = processExecutors.take();
+    var processExecutor = getProcessExecutor();
+
     var result = processExecutor.exec(input);
     processExecutors.put(processExecutor);
     return result;
   }
 
+  private ProcessExecutor<InputT, OutputT> getProcessExecutor() throws InterruptedException {
+    var processExecutor = processExecutors.poll();
+    if (processExecutor == null) {
+      if (runningProcessNum < maxProcessNum) {
+        processExecutors.put(processSupplier.get());
+        runningProcessNum++;
+      }
+      processExecutor = processExecutors.take();
+    }
+
+    return processExecutor;
+  }
 }

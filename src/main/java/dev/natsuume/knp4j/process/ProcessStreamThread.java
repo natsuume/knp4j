@@ -6,15 +6,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
 import java.util.function.Consumer;
 
 public class ProcessStreamThread implements Runnable {
   private final InputStream inputStream;
-  private final Consumer<List<String>> updateStreamLines;
+  private final Consumer<List<String>> outputConsumer;
 
-  public ProcessStreamThread(InputStream inputStream, Consumer<List<String>> updateStreamLines) {
+  public ProcessStreamThread(InputStream inputStream, Consumer<List<String>> outputConsumer) {
     this.inputStream = inputStream;
-    this.updateStreamLines = updateStreamLines;
+    this.outputConsumer = outputConsumer;
   }
 
   @Override
@@ -27,7 +28,7 @@ public class ProcessStreamThread implements Runnable {
           continue;
         }
 
-        updateStreamLines.accept(streamLines);
+        outputConsumer.accept(streamLines);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -39,6 +40,9 @@ public class ProcessStreamThread implements Runnable {
     String line;
     while (bufferedReader.ready()) {
       line = bufferedReader.readLine();
+      if (line == null) {
+        continue;
+      }
       streamLines.add(line);
     }
     return streamLines;
