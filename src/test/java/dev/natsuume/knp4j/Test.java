@@ -16,8 +16,9 @@ public class Test {
         String line;
         if ((line = sc.nextLine()) != null) {
           System.out.println("input : " + line);
-          String result = knpWrapper.analyze(line).toString();
-          System.out.println(result);
+          var result = knpWrapper.analyze(line);
+          System.out.println("score: " + result.getScore());
+          result.getRootNode().getDependencySurfaceForm().stream().forEach(System.out::println);
         }
       }
     } catch (IOException | InterruptedException e) {

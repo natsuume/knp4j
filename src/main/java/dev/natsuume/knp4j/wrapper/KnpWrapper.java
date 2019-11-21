@@ -26,7 +26,7 @@ public class KnpWrapper {
 
   private ProcessExecutor<JumanResult, KnpResult> getKnpExecutor() {
     return new ProcessExecutorBuilder<JumanResult, KnpResult>()
-        .setCommand(List.of("bash", "-c", "knp -tab -print-num"))
+        .setCommand(List.of("bash", "-c", "knp -tab -print-num -anaphora"))
         .setInputConverter(JumanResult::toKnpInput)
         .setOutputConverter(KnpResult::new)
         .start();
