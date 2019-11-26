@@ -7,6 +7,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Function;
 
 public class ProcessExecutor<InputT, OutputT> {
@@ -59,20 +60,29 @@ public class ProcessExecutor<InputT, OutputT> {
    * @param input 入力
    * @return 出力
    */
-  public OutputT exec(InputT input) {
+  public OutputT exec(InputT input) throws IOException, InterruptedException{
     List<String> readLines = new ArrayList<>();
-    try {
-      String inputText = inputConverter.apply(input);
-      BufferedWriter bufferedWriter =
-          new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-      bufferedWriter.write(inputText);
-      bufferedWriter.write("\n"); // BufferedWriter::newLineは改行コードが環境で変わるのでNG
-      bufferedWriter.flush();
+    String inputText = inputConverter.apply(input);
+    BufferedWriter bufferedWriter =
+        new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+    bufferedWriter.write(inputText);
+    bufferedWriter.write("\n"); // BufferedWriter::newLineは改行コードが環境で変わるのでNG
+    bufferedWriter.flush();
 
-      readLines = inputStreamReader.getStreamLines();
-    } catch (IOException | InterruptedException e) {
-      e.printStackTrace();
-    }
+    readLines = inputStreamReader.getStreamLines();
     return outputConverter.apply(readLines);
+  }
+
+  public void close() throws IOException, InterruptedException{
+    inputStreamReader.executorService.shutdown();
+    process.getErrorStream().close();
+    process.getInputStream().close();
+    process.getOutputStream().close();
+    process.destroy();
+    process.waitFor();
+  }
+
+  public boolean isAlive(){
+    return process.isAlive();
   }
 }
