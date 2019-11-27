@@ -10,12 +10,4 @@ public class DependencyTarget {
     this.targetIdx = Integer.parseInt(targetIdx);
     this.dependencyType = DependencyType.get(typeString);
   }
-
-  public int getTargetIdx() {
-    return targetIdx;
-  }
-
-  public DependencyType getDependencyType() {
-    return dependencyType;
-  }
 }

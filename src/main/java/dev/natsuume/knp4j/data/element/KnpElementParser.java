@@ -1,7 +1,7 @@
-package dev.natsuume.knp4j.data.builder;
+package dev.natsuume.knp4j.data.element;
 
 import dev.natsuume.knp4j.data.DependencyTarget;
-import dev.natsuume.knp4j.data.DependencyType;
+import dev.natsuume.knp4j.data.define.KnpFeature;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -14,21 +14,20 @@ public abstract class KnpElementParser {
   private static final int BASIC_INFO_DEPENDENCY_POSITION = 2;
   private static final int NO_IDX = -1;
 
-  private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+(?=>)");
-  private static final String BASIC_INFO_DELIMITER = " ";
+  private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+?(?=>)");
+  static final String BASIC_INFO_DELIMITER = " ";
   private static final String EOS = "EOS";
 
-  protected final int idx;
-  protected final DependencyTarget dependencyTarget;
-  protected final ElementInfo info;
-  protected final List<String> rawFeatures;
+  final int idx;
+  final DependencyTarget dependencyTarget;
+  final ElementInfo info;
+  final List<KnpFeature> features;
 
-  public KnpElementParser(String line) {
+  KnpElementParser(String line) {
     this.info = new ElementInfo(line);
-    this.rawFeatures = parseRawFeatures(info);
+    this.features = parseFeatures(info);
     this.idx = parseIdx(info);
     this.dependencyTarget = parseDependencyTarget(info);
-
   }
 
   private DependencyTarget parseDependencyTarget(ElementInfo info) {
@@ -39,11 +38,12 @@ public abstract class KnpElementParser {
     return new DependencyTarget(basicInfo[BASIC_INFO_DEPENDENCY_POSITION]);
   }
 
-  private List<String> parseRawFeatures(ElementInfo info) {
+  private List<KnpFeature> parseFeatures(ElementInfo info) {
     return FEATURE_PATTERN
         .matcher(info.featureInfo)
         .results()
         .map(MatchResult::group)
+        .map(KnpFeatureImpl::new)
         .collect(Collectors.toList());
   }
 
@@ -59,28 +59,28 @@ public abstract class KnpElementParser {
     }
   }
 
-  protected class ElementInfo {
+  final class ElementInfo {
     private static final int BASIC_INFO_IDX = 0;
     private static final int FEATURE_INFO_IDX = 1;
     private static final String FEATURE_BEGIN_DELIMITER = " (?=<)";
-    public final String basicInfo;
-    public final String featureInfo;
+    final String basicInfo;
+    final String featureInfo;
 
-    public ElementInfo(String line) {
+    ElementInfo(String line) {
       var info = line.split(FEATURE_BEGIN_DELIMITER);
       this.basicInfo = info[BASIC_INFO_IDX];
       this.featureInfo = info[FEATURE_INFO_IDX];
     }
 
-    public boolean isClause() {
+    boolean isClause() {
       return basicInfo.charAt(0) == CLAUSE_PREFIX;
     }
 
-    public boolean isPhrase() {
+    boolean isPhrase() {
       return basicInfo.charAt(0) == PHRASE_PREFIX;
     }
 
-    public boolean isMorpheme() {
+    boolean isMorpheme() {
       return !isClause() && !isPhrase() && !basicInfo.startsWith(EOS);
     }
   }
