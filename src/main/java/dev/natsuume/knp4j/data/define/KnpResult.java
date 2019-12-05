@@ -6,48 +6,49 @@ import dev.natsuume.knp4j.data.element.KnpPhrase;
 import java.util.List;
 
 public interface KnpResult {
-  KnpResult INVALID_RESULT =
-      new KnpResult() {
-        @Override
-        public List<KnpClause> getClauses() {
-          return List.of();
-        }
+  List<KnpResult> INVALID_RESULT =
+      List.of(
+          new KnpResult() {
+            @Override
+            public List<KnpClause> getClauses() {
+              return List.of();
+            }
 
-        @Override
-        public List<KnpMorpheme> getMorphemes() {
-          return List.of();
-        }
+            @Override
+            public List<KnpMorpheme> getMorphemes() {
+              return List.of();
+            }
 
-        @Override
-        public List<KnpPhrase> getPhrases() {
-          return List.of();
-        }
+            @Override
+            public List<KnpPhrase> getPhrases() {
+              return List.of();
+            }
 
-        @Override
-        public KnpClause getRootNode() {
-          return null;
-        }
+            @Override
+            public KnpClause getRootNode() {
+              return null;
+            }
 
-        @Override
-        public List<String> getRawResultData() {
-          return List.of();
-        }
+            @Override
+            public List<String> getRawResultData() {
+              return List.of();
+            }
 
-        @Override
-        public String getSurfaceForm() {
-          return "";
-        }
+            @Override
+            public String getSurfaceForm() {
+              return "";
+            }
 
-        @Override
-        public double getScore() {
-          return Double.MIN_VALUE;
-        }
+            @Override
+            public double getScore() {
+              return Double.MIN_VALUE;
+            }
 
-        @Override
-        public boolean isValid() {
-          return false;
-        }
-      };
+            @Override
+            public boolean isValid() {
+              return false;
+            }
+          });
 
   /**
    * 文節のリストを返す.

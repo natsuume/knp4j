@@ -20,6 +20,10 @@ public class KnpResultParser {
   List<KnpClause> knpClauses = new ArrayList<>();
   private boolean isValid;
 
+  /**
+   * KNPの解析結果からParserを生成する.
+   * @param results 解析結果文字列リスト
+   */
   public KnpResultParser(List<String> results) {
     this.rawData = results;
     this.isValid = isValid(results);
@@ -95,6 +99,10 @@ public class KnpResultParser {
     var metaData = rawData.get(META_DATA_IDX);
   }
 
+  /**
+   * 情報を構造化したKnpResultインスタンスを返す.
+   * @return 解析結果のインスタンス
+   */
   public KnpResult build() {
     return isValid ? new KnpResultImpl(this) : KnpResult.INVALID_RESULT;
   }

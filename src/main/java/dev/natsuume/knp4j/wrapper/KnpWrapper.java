@@ -2,10 +2,10 @@ package dev.natsuume.knp4j.wrapper;
 
 import dev.natsuume.knp4j.data.JumanResult;
 import dev.natsuume.knp4j.data.define.KnpResult;
-import dev.natsuume.knp4j.data.element.KnpResultImpl;
+import dev.natsuume.knp4j.data.element.KnpResultParser;
 import dev.natsuume.knp4j.process.ProcessExecutorImpl;
-import dev.natsuume.knp4j.process.builder.ProcessExecutorBuilder;
 import dev.natsuume.knp4j.process.ProcessManager;
+import dev.natsuume.knp4j.process.builder.ProcessExecutorBuilder;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -19,8 +19,14 @@ public class KnpWrapper {
   private final List<String> knpCommnad;
   private final int retryNum;
   private ProcessManager<String, JumanResult> jumanManager;
-  private ProcessManager<JumanResult, KnpResultImpl> knpManager;
+  private ProcessManager<JumanResult, KnpResult> knpManager;
 
+  /**
+   * KnpWrapperのインスタンスを生成する.
+   * @param jumanInitInfo JUMAN設定
+   * @param knpInitInfo KNP設定
+   * @param retryNum 解析時、エラー等で失敗した際に再試行する回数
+   */
   public KnpWrapper(ProcessInitInfo jumanInitInfo, ProcessInitInfo knpInitInfo, int retryNum) {
     this.jumanInitInfo = jumanInitInfo;
     this.knpInitInfo = knpInitInfo;
@@ -37,7 +43,7 @@ public class KnpWrapper {
         jumanInitInfo.getMaxNum(), jumanInitInfo.getStartNum(), this::getJumanExecutor);
   }
 
-  private ProcessManager<JumanResult, KnpResultImpl> startKnpManager() {
+  private ProcessManager<JumanResult, KnpResult> startKnpManager() {
     return new ProcessManager<>(
         knpInitInfo.getMaxNum(), knpInitInfo.getStartNum(), this::getKnpExecutor);
   }
@@ -49,11 +55,11 @@ public class KnpWrapper {
         .start();
   }
 
-  private ProcessExecutorImpl<JumanResult, KnpResultImpl> getKnpExecutor() {
-    return new ProcessExecutorBuilder<JumanResult, KnpResultImpl>()
+  private ProcessExecutorImpl<JumanResult, KnpResult> getKnpExecutor() {
+    return new ProcessExecutorBuilder<JumanResult, KnpResult>()
         .setCommand(knpCommnad)
         .setInputConverter(JumanResult::toKnpInput)
-        .setOutputConverter(KnpResultImpl::new)
+        .setOutputConverter(list -> new KnpResultParser(list).build())
         .start();
   }
 
@@ -98,15 +104,27 @@ public class KnpWrapper {
     }
   }
 
+  /**
+   * 入力文字列を解析した結果を返す.
+   * @param input 入力文字列
+   * @return 解析結果
+   * @throws InterruptedException Threadの割り込みが発生した
+   * @throws IOException プロセスのIO処理に失敗した
+   */
   public KnpResult analyze(String input) throws InterruptedException, IOException {
-    if(input.matches(INVALID_INPUT_REGEX) || input.matches(NEW_LINE_REGEX)){
-      return KnpResult.INVALID_RESULT;
+    if (input.matches(INVALID_INPUT_REGEX) || input.matches(NEW_LINE_REGEX)) {
+      return KnpResult.INVALID_RESULT.get(0);
     }
     JumanResult jumanResult = analyzeJuman(input);
     KnpResult knpResult = analyzeKnp(jumanResult);
     return knpResult;
   }
 
+  /**
+   * このインスタンスが管理しているJUMAN, KNPをcloseする.
+   * @throws InterruptedException Threadの割り込みが発生した
+   * @throws IOException プロセスのIO処理に失敗した
+   */
   public void close() throws InterruptedException, IOException {
     jumanManager.close();
     knpManager.close();

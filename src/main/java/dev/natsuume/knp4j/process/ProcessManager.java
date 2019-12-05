@@ -82,27 +82,27 @@ public class ProcessManager<InputT, OutputT> {
    * @param input 入力
    * @return プロセスの処理結果
    */
-  public OutputT exec(InputT input) throws InterruptedException, IOException{
+  public OutputT exec(InputT input) throws InterruptedException, IOException {
     ProcessExecutor<InputT, OutputT> processExecutor = getProcessExecutor();
     OutputT result;
 
-    try{
+    try {
       result = processExecutor.exec(input);
-    }catch (IOException | InterruptedException e) {
-      try{
+    } catch (IOException | InterruptedException e) {
+      try {
         processExecutor.close();
-        synchronized (allProcesses){
+        synchronized (allProcesses) {
           allProcesses.remove(processExecutor);
           addNewProcess();
         }
-      }catch (IOException e2) {
+      } catch (IOException e2) {
         isAlive = false;
         e.addSuppressed(e2);
       }
       throw e;
     }
 
-    if(processExecutor.isAlive()){
+    if (processExecutor.isAlive()) {
       processExecutors.put(processExecutor);
     }
     return result;
@@ -120,9 +120,9 @@ public class ProcessManager<InputT, OutputT> {
     return processExecutor;
   }
 
-  private void addNewProcess() throws InterruptedException{
+  private void addNewProcess() throws InterruptedException {
     synchronized (allProcesses) {
-      if(allProcesses.size() >= maxProcessNum){
+      if (allProcesses.size() >= maxProcessNum) {
         return;
       }
 
@@ -134,6 +134,7 @@ public class ProcessManager<InputT, OutputT> {
 
   /**
    * 利用可能かどうかを返す.
+   *
    * @return 利用可能かどうか
    */
   public boolean isAlive() {
@@ -142,12 +143,13 @@ public class ProcessManager<InputT, OutputT> {
 
   /**
    * このProcessManagerが管理しているProcessをcloseする.
-   * @throws IOException
-   * @throws InterruptedException
+   *
+   * @throws IOException プロセスのIO処理に失敗した
+   * @throws InterruptedException Threadの割り込みが発生した
    */
-  public void close() throws IOException, InterruptedException{
+  public void close() throws IOException, InterruptedException {
     synchronized (allProcesses) {
-      for(ProcessExecutor<InputT, OutputT> executor: allProcesses) {
+      for (ProcessExecutor<InputT, OutputT> executor : allProcesses) {
         executor.close();
       }
     }
