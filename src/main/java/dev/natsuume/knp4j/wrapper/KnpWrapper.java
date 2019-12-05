@@ -3,8 +3,8 @@ package dev.natsuume.knp4j.wrapper;
 import dev.natsuume.knp4j.data.JumanResult;
 import dev.natsuume.knp4j.data.define.KnpResult;
 import dev.natsuume.knp4j.data.element.KnpResultImpl;
-import dev.natsuume.knp4j.process.ProcessExecutor;
-import dev.natsuume.knp4j.process.ProcessExecutorBuilder;
+import dev.natsuume.knp4j.process.ProcessExecutorImpl;
+import dev.natsuume.knp4j.process.builder.ProcessExecutorBuilder;
 import dev.natsuume.knp4j.process.ProcessManager;
 import java.io.IOException;
 import java.util.List;
@@ -42,14 +42,14 @@ public class KnpWrapper {
         knpInitInfo.getMaxNum(), knpInitInfo.getStartNum(), this::getKnpExecutor);
   }
 
-  private ProcessExecutor<String, JumanResult> getJumanExecutor() {
+  private ProcessExecutorImpl<String, JumanResult> getJumanExecutor() {
     return new ProcessExecutorBuilder<String, JumanResult>()
         .setCommand(jumanCommand)
         .setOutputConverter(JumanResult::new)
         .start();
   }
 
-  private ProcessExecutor<JumanResult, KnpResultImpl> getKnpExecutor() {
+  private ProcessExecutorImpl<JumanResult, KnpResultImpl> getKnpExecutor() {
     return new ProcessExecutorBuilder<JumanResult, KnpResultImpl>()
         .setCommand(knpCommnad)
         .setInputConverter(JumanResult::toKnpInput)

@@ -3,7 +3,6 @@ package dev.natsuume.knp4j.process;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
@@ -133,10 +132,19 @@ public class ProcessManager<InputT, OutputT> {
     }
   }
 
+  /**
+   * 利用可能かどうかを返す.
+   * @return 利用可能かどうか
+   */
   public boolean isAlive() {
     return isAlive;
   }
 
+  /**
+   * このProcessManagerが管理しているProcessをcloseする.
+   * @throws IOException
+   * @throws InterruptedException
+   */
   public void close() throws IOException, InterruptedException{
     synchronized (allProcesses) {
       for(ProcessExecutor<InputT, OutputT> executor: allProcesses) {

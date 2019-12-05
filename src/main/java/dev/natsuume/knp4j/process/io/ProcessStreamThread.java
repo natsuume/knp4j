@@ -1,4 +1,4 @@
-package dev.natsuume.knp4j.process;
+package dev.natsuume.knp4j.process.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;

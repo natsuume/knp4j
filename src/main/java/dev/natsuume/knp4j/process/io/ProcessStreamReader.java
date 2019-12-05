@@ -1,4 +1,4 @@
-package dev.natsuume.knp4j.process;
+package dev.natsuume.knp4j.process.io;
 
 import java.io.InputStream;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class ProcessStreamReader {
   private final BlockingDeque<List<String>> processStreamLines = new LinkedBlockingDeque<>();
-  ExecutorService executorService = Executors.newSingleThreadExecutor();
+  private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public ProcessStreamReader(InputStream inputStream) {
     var processStreamThread = new ProcessStreamThread(inputStream, this::putStreamLines);
@@ -30,5 +30,9 @@ public class ProcessStreamReader {
 
   public boolean isEmpty() {
     return processStreamLines.isEmpty();
+  }
+
+  public void shutdown() {
+    executorService.shutdown();
   }
 }

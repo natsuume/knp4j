@@ -20,6 +20,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
+
+    // https://mvnrepository.com/artifact/io.vavr/vavr
+    compile group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
+
 }
 
 checkstyle {

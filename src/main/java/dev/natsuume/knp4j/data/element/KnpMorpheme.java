@@ -2,8 +2,8 @@ package dev.natsuume.knp4j.data.element;
 
 import dev.natsuume.knp4j.data.DetailPartOfSpeech;
 import dev.natsuume.knp4j.data.MajorPartOfSpeech;
-import dev.natsuume.knp4j.data.define.KnpNode;
 import dev.natsuume.knp4j.data.define.KnpFeature;
+import dev.natsuume.knp4j.data.define.KnpNode;
 import java.util.ArrayList;
 import java.util.List;
 

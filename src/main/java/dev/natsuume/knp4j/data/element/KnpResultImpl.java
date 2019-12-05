@@ -38,7 +38,7 @@ public class KnpResultImpl implements KnpResult {
       if (clause.getDependencyTargetIdx() == -1) {
         continue;
       }
-      //      knpClauses.get(clause.getDependencyTargetIdx()).addDependencyClause(clause);
+      //      knpClauses.getType(clause.getDependencyTargetIdx()).addDependencyClause(clause);
     }
   }
 

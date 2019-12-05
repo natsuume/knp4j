@@ -1,5 +1,6 @@
-package dev.natsuume.knp4j.process;
+package dev.natsuume.knp4j.process.builder;
 
+import dev.natsuume.knp4j.process.ProcessExecutorImpl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -55,10 +56,10 @@ public class ProcessExecutorBuilder<InputT, OutputT> {
    * @return サブプロセスをラップしたProcessExecutorインスタンス
    * @throws IOException プロセスの起動に失敗した
    */
-  public ProcessExecutor<InputT, OutputT> start() {
+  public ProcessExecutorImpl<InputT, OutputT> start() {
     try {
       var process = processBuilder.start();
-      return new ProcessExecutor<>(process, inputConverter, outputConverter);
+      return new ProcessExecutorImpl<>(process, inputConverter, outputConverter);
     } catch (IOException e) {
       e.printStackTrace();
     }

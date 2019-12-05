@@ -9,6 +9,10 @@ public class JumanResult {
     this.rawData = lines;
   }
 
+  /**
+   * knpの入力に与える文字列を返す.
+   * @return knpの入力に与える文字列
+   */
   public String toKnpInput() {
     return String.join(" \\\n", rawData);
   }

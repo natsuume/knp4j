@@ -48,10 +48,21 @@ public enum DetailPartOfSpeech {
     this.japaneseForm = japaneseForm;
   }
 
-  public String getJapaneseForm(){
+  /**
+   * 日本語文字列を返す.
+   *
+   * @return 品詞の日本語文字列
+   */
+  public String getJapaneseForm() {
     return japaneseForm;
   }
 
+  /**
+   * 入力の文字列に一致する品詞を取得する.
+   *
+   * @param japaneseForm 品詞の日本語文字列
+   * @return 該当する品詞. 一致するものがない場合はDetailPartOfSpeech.NONEを返す
+   */
   public static DetailPartOfSpeech find(String japaneseForm) {
     return Arrays.stream(values())
         .parallel()

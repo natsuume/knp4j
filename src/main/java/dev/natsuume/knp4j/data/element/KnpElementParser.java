@@ -31,7 +31,7 @@ public abstract class KnpElementParser {
   }
 
   private DependencyTarget parseDependencyTarget(ElementInfo info) {
-    if(!info.isPhrase() && !info.isClause()){
+    if (!info.isPhrase() && !info.isClause()) {
       return null;
     }
     var basicInfo = info.basicInfo.split(BASIC_INFO_DELIMITER);

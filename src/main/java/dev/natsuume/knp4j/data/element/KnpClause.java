@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import jdk.jfr.Percentage;
 
 public class KnpClause implements KnpParentNode {
   private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+(?=>)");
@@ -22,6 +23,10 @@ public class KnpClause implements KnpParentNode {
   private final List<KnpFeature> features;
   private final List<KnpClause> dependencies;
 
+  /**
+   * 文節を表すインスタンスを生成する.
+   * @param parser 文節情報を持つParser
+   */
   public KnpClause(KnpClauseParser parser) {
     this.phrases = parser.phrases;
     this.idx = parser.idx;
@@ -30,6 +35,7 @@ public class KnpClause implements KnpParentNode {
     this.features = parser.features;
   }
 
+  @Override
   public String getSurfaceForm() {
     return phrases.stream().map(KnpPhrase::getSurfaceForm).collect(Collectors.joining());
   }
@@ -39,7 +45,11 @@ public class KnpClause implements KnpParentNode {
     return phrases.stream().map(KnpPhrase::getReadingForm).collect(Collectors.joining());
   }
 
-  public List<KnpClause> getDependencies(){
+  /**
+   * この文節に係る文節一覧を返す.
+   * @return この文節を係り先に持つ文節一覧を返す.
+   */
+  public List<KnpClause> getDependencies() {
     return new ArrayList<>(dependencies);
   }
 
@@ -48,6 +58,7 @@ public class KnpClause implements KnpParentNode {
     return new ArrayList<>(features);
   }
 
+  @Override
   public int getIdx() {
     return idx;
   }
@@ -60,10 +71,18 @@ public class KnpClause implements KnpParentNode {
         .collect(Collectors.toList());
   }
 
-  public List<KnpPhrase> getPhrases(){
+  /**
+   * この文節に対応する句一覧を返す.
+   * @return 句の一覧
+   */
+  public List<KnpPhrase> getPhrases() {
     return new ArrayList<>(phrases);
   }
 
+  /**
+   * 係り受けを元に語順を入れ替えた表層文字列一覧を返す.
+   * return 表層文字列リスト
+   */
   @Deprecated
   public List<String> getDependencySurfaceForm() {
     if (dependencies.isEmpty()) {
@@ -93,6 +112,7 @@ public class KnpClause implements KnpParentNode {
     return dependencyTarget;
   }
 
+  @Override
   public int getDependencyTargetIdx() {
     return dependencyTarget.targetIdx;
   }
