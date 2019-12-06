@@ -3,16 +3,19 @@ package dev.natsuume.knp4j.wrapper;
 import dev.natsuume.knp4j.data.JumanResult;
 import dev.natsuume.knp4j.data.define.KnpResult;
 import dev.natsuume.knp4j.data.element.KnpResultParser;
-import dev.natsuume.knp4j.process.ProcessExecutorImpl;
+import dev.natsuume.knp4j.process.ProcessExecutor;
 import dev.natsuume.knp4j.process.ProcessManager;
 import dev.natsuume.knp4j.process.builder.ProcessExecutorBuilder;
+import io.vavr.control.Try;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class KnpWrapper {
-  private static final String NEW_LINE_REGEX = ".*(\r\n|\n|\r).*";
-  private static final String INVALID_INPUT_REGEX = ".*[+*].*";
+  private static final String NEW_LINE_REGEX = "(\r\n|\n|\r)";
+  private static final String INVALID_INPUT_REGEX = "[\\s\\S]*[\\+\\*][\\s\\S]*";
   private final ProcessInitInfo jumanInitInfo;
   private final ProcessInitInfo knpInitInfo;
   private final List<String> jumanCommand;
@@ -23,6 +26,7 @@ public class KnpWrapper {
 
   /**
    * KnpWrapperのインスタンスを生成する.
+   *
    * @param jumanInitInfo JUMAN設定
    * @param knpInitInfo KNP設定
    * @param retryNum 解析時、エラー等で失敗した際に再試行する回数
@@ -40,88 +44,64 @@ public class KnpWrapper {
 
   private ProcessManager<String, JumanResult> startJumanManager() {
     return new ProcessManager<>(
-        jumanInitInfo.getMaxNum(), jumanInitInfo.getStartNum(), this::getJumanExecutor);
+        jumanInitInfo.getMaxNum(),
+        jumanInitInfo.getStartNum(),
+        () -> instantiateProcessExecutor(jumanCommand, Function.identity(), JumanResult::new));
   }
 
   private ProcessManager<JumanResult, KnpResult> startKnpManager() {
+    Function<List<String>, KnpResult> outputFunction = list -> new KnpResultParser(list).build();
     return new ProcessManager<>(
-        knpInitInfo.getMaxNum(), knpInitInfo.getStartNum(), this::getKnpExecutor);
+        knpInitInfo.getMaxNum(),
+        knpInitInfo.getStartNum(),
+        () -> instantiateProcessExecutor(knpCommnad, JumanResult::toKnpInput, outputFunction));
   }
 
-  private ProcessExecutorImpl<String, JumanResult> getJumanExecutor() {
-    return new ProcessExecutorBuilder<String, JumanResult>()
-        .setCommand(jumanCommand)
-        .setOutputConverter(JumanResult::new)
+  private <InputT, OutputT> ProcessExecutor<InputT, OutputT> instantiateProcessExecutor(
+      List<String> command,
+      Function<InputT, String> inputConverter,
+      Function<List<String>, OutputT> outputConverter) {
+    return new ProcessExecutorBuilder<InputT, OutputT>()
+        .setCommand(command)
+        .setInputConverter(inputConverter)
+        .setOutputConverter(outputConverter)
         .start();
-  }
-
-  private ProcessExecutorImpl<JumanResult, KnpResult> getKnpExecutor() {
-    return new ProcessExecutorBuilder<JumanResult, KnpResult>()
-        .setCommand(knpCommnad)
-        .setInputConverter(JumanResult::toKnpInput)
-        .setOutputConverter(list -> new KnpResultParser(list).build())
-        .start();
-  }
-
-  private <T, R> R retryAnalyze(Function<T, R> func, T input) {
-    for (int i = 0; i < retryNum; i++) {
-      try {
-        return func.apply(input);
-      } catch (Exception e2) {
-        continue;
-      }
-    }
-    return null;
-  }
-
-  private JumanResult analyzeJuman(String input) throws InterruptedException, IOException {
-    try {
-      return jumanManager.exec(input);
-    } catch (InterruptedException | IOException e) {
-      for (int i = 0; i < retryNum; i++) {
-        try {
-          return jumanManager.exec(input);
-        } catch (InterruptedException | IOException e2) {
-          continue;
-        }
-      }
-      throw e;
-    }
-  }
-
-  private KnpResult analyzeKnp(JumanResult input) throws InterruptedException, IOException {
-    try {
-      return knpManager.exec(input);
-    } catch (InterruptedException | IOException e) {
-      for (int i = 0; i < retryNum; i++) {
-        try {
-          return knpManager.exec(input);
-        } catch (InterruptedException | IOException e2) {
-          continue;
-        }
-      }
-      throw e;
-    }
   }
 
   /**
-   * 入力文字列を解析した結果を返す.
+   * 入力文字列を解析した結果を返す. 解析に失敗した場合はKnpResult.INVALID_RESULTを返す. 改行が含まれる場合それぞれ独立して解析した結果を返す.
+   *
    * @param input 入力文字列
-   * @return 解析結果
-   * @throws InterruptedException Threadの割り込みが発生した
-   * @throws IOException プロセスのIO処理に失敗した
+   * @return 解析結果のリスト(順序は保証されない)
    */
-  public KnpResult analyze(String input) throws InterruptedException, IOException {
-    if (input.matches(INVALID_INPUT_REGEX) || input.matches(NEW_LINE_REGEX)) {
-      return KnpResult.INVALID_RESULT.get(0);
+  public List<KnpResult> analyze(String input) {
+    return Arrays.stream(input.split(NEW_LINE_REGEX))
+        .parallel()
+        .map(
+            text ->
+                text.matches(INVALID_INPUT_REGEX)
+                    ? KnpResult.INVALID_RESULT
+                    : analyze(jumanManager, text, 0)
+                        .flatMapTry(result -> analyze(knpManager, result, 0))
+                        .getOrElseGet(exception -> KnpResult.INVALID_RESULT))
+        .collect(Collectors.toList());
+  }
+
+  private <InputT, OutputT> Try<OutputT> analyze(
+      ProcessManager<InputT, OutputT> processManager, InputT input, int tryCount) {
+    Try<OutputT> result = Try.success(input).mapTry(processManager::exec);
+    System.out.println(tryCount + ": " + input);
+
+    if (result.isFailure() && tryCount < retryNum) {
+      result = analyze(processManager, input, tryCount + 1);
     }
-    JumanResult jumanResult = analyzeJuman(input);
-    KnpResult knpResult = analyzeKnp(jumanResult);
-    return knpResult;
+
+    return result;
   }
 
   /**
    * このインスタンスが管理しているJUMAN, KNPをcloseする.
+   *
    * @throws InterruptedException Threadの割り込みが発生した
    * @throws IOException プロセスのIO処理に失敗した
    */

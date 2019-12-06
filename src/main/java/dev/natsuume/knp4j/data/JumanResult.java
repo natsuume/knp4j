@@ -16,4 +16,8 @@ public class JumanResult {
   public String toKnpInput() {
     return String.join(" \\\n", rawData);
   }
+
+  public String toString(){
+    return rawData.toString();
+  }
 }

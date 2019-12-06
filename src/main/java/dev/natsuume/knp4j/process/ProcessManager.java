@@ -87,8 +87,10 @@ public class ProcessManager<InputT, OutputT> {
     OutputT result;
 
     try {
+      System.out.println("exec: " + input.toString());
       result = processExecutor.exec(input);
     } catch (IOException | InterruptedException e) {
+
       try {
         processExecutor.close();
         synchronized (allProcesses) {
