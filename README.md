@@ -98,11 +98,11 @@ KnpResultは下記メソッドを持ちます。
 # LICENSE
 
 このソフトウェアは下記を使用しています。  
-* Google Guava Libraries(https://github.com/google/guava/)
-* vavr(https://github.com/vavr-io/vavr)  
+* [Google Guava Libraries](https://github.com/google/guava/)
+* [vavr](https://github.com/vavr-io/vavr)  
 
 これらのライセンス条項は[LICENSE](LICENSE)にあります。
 
-このソフトウェアはソースコードのFormatにcheckstyle(https://github.com/checkstyle/checkstyle)のgoogle_checks.xmlを利用しています。  
+このソフトウェアはソースコードのFormatに[checkstyle](https://github.com/checkstyle/checkstyle)の[google_checks.xml](config/google_checks.xml)を利用しています。  
 上記ファイルのライセンス条項は[checkstyle_LICENSE](config/checkstyle_LICENSE)にあります。
 
