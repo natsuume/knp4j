@@ -25,7 +25,7 @@ dependencies {
 
 checkstyle {
     toolVersion = '8.24'
-    configFile = file('config/google-java-format.xml')
+    configFile = file('config/google_checks.xml')
     configProperties = [
             'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
     ]
