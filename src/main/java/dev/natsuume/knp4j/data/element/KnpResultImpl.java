@@ -10,7 +10,7 @@ public class KnpResultImpl implements KnpResult {
   private final List<KnpClause> knpClauses;
   private final double score;
 
-  KnpResultImpl(KnpResultParser parser) {
+  KnpResultImpl(KnpResultBuilder parser) {
     this.rawData = parser.rawData;
     this.score = parser.score;
     this.knpClauses = parser.knpClauses;

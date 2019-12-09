@@ -7,7 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class KnpElementParser {
+public abstract class KnpElementBuilder {
   private static final char CLAUSE_PREFIX = '*';
   private static final char PHRASE_PREFIX = '+';
   private static final int BASIC_INFO_IDX_POSITION = 1;
@@ -23,7 +23,7 @@ public abstract class KnpElementParser {
   final ElementInfo info;
   final List<KnpFeature> features;
 
-  KnpElementParser(String line) {
+  KnpElementBuilder(String line) {
     this.info = new ElementInfo(line);
     this.features = parseFeatures(info);
     this.idx = parseIdx(info);

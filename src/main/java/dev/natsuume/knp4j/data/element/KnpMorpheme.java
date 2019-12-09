@@ -17,7 +17,7 @@ public class KnpMorpheme implements KnpNode {
   private final String conjugationalForm;
   private final List<KnpFeature> features;
 
-  KnpMorpheme(KnpMorphemeParser parser) {
+  KnpMorpheme(KnpMorphemeBuilder parser) {
     this.surfaceForm = parser.surfaceForm;
     this.readingForm = parser.readingForm;
     this.baseForm = parser.baseForm;

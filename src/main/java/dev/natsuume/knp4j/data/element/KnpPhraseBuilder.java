@@ -3,10 +3,10 @@ package dev.natsuume.knp4j.data.element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnpPhraseParser extends KnpElementParser {
+public class KnpPhraseBuilder extends KnpElementBuilder {
   List<KnpMorpheme> morphemes = new ArrayList<>();
 
-  public KnpPhraseParser(String line) {
+  public KnpPhraseBuilder(String line) {
     super(line);
   }
 
@@ -16,7 +16,7 @@ public class KnpPhraseParser extends KnpElementParser {
    * @param morpheme 形態素
    * @return このインスタンス
    */
-  public KnpPhraseParser addMorpheme(KnpMorpheme morpheme) {
+  public KnpPhraseBuilder addMorpheme(KnpMorpheme morpheme) {
     this.morphemes.add(morpheme);
     return this;
   }

@@ -1,7 +1,6 @@
 package dev.natsuume.knp4j.process;
 
 import dev.natsuume.knp4j.process.io.ProcessStreamReader;
-import io.vavr.control.Try;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -58,14 +57,14 @@ public class ProcessExecutorImpl<InputT, OutputT> implements ProcessExecutor<Inp
   }
 
   @Override
-  public OutputT exec(InputT input) throws IOException, InterruptedException{
+  public OutputT exec(InputT input) throws IOException, InterruptedException {
     String inputText = inputConverter.apply(input);
     writeToProcessStream(inputText);
     var lines = inputStreamReader.getStreamLines();
     return outputConverter.apply(lines);
   }
 
-  private void writeToProcessStream(String text) throws IOException{
+  private void writeToProcessStream(String text) throws IOException {
     BufferedWriter bufferedWriter =
         new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
     bufferedWriter.write(text);

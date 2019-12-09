@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import jdk.jfr.Percentage;
 
 public class KnpClause implements KnpParentNode {
   private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+(?=>)");
@@ -27,7 +26,7 @@ public class KnpClause implements KnpParentNode {
    * 文節を表すインスタンスを生成する.
    * @param parser 文節情報を持つParser
    */
-  public KnpClause(KnpClauseParser parser) {
+  public KnpClause(KnpClauseBuilder parser) {
     this.phrases = parser.phrases;
     this.idx = parser.idx;
     this.dependencyTarget = parser.dependencyTarget;
@@ -77,34 +76,6 @@ public class KnpClause implements KnpParentNode {
    */
   public List<KnpPhrase> getPhrases() {
     return new ArrayList<>(phrases);
-  }
-
-  /**
-   * 係り受けを元に語順を入れ替えた表層文字列一覧を返す.
-   * return 表層文字列リスト
-   */
-  @Deprecated
-  public List<String> getDependencySurfaceForm() {
-    if (dependencies.isEmpty()) {
-      return List.of(getSurfaceForm());
-    }
-    if (dependencies.size() == 1) {
-      return dependencies.get(0).getDependencySurfaceForm().stream()
-          .map(string -> string + getSurfaceForm())
-          .collect(Collectors.toList());
-    }
-
-    List<String> surfaceForms =
-        dependencies.stream()
-            .map(KnpClause::getDependencySurfaceForm)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-
-    Collection<List<String>> forms = Collections2.permutations(surfaceForms);
-    System.out.println("forms: " + forms);
-    return forms.stream()
-        .map(list -> String.join("", list) + getSurfaceForm())
-        .collect(Collectors.toList());
   }
 
   @Override

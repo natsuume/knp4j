@@ -15,11 +15,8 @@ repositories {
 dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
 
-    compile group: 'com.google.flogger', name: 'flogger', version: '0.4'
-    runtime group: 'com.google.flogger', name: 'flogger-system-backend', version: '0.4'
-
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
+    implementation("com.google.guava:guava:28.1-jre")
 
     // https://mvnrepository.com/artifact/io.vavr/vavr
     compile group: 'io.vavr', name: 'vavr', version: '1.0.0-alpha-3'
@@ -28,7 +25,7 @@ dependencies {
 
 checkstyle {
     toolVersion = '8.24'
-    configFile = file('google-java-format.xml')
+    configFile = file('config/google-java-format.xml')
     configProperties = [
             'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
     ]

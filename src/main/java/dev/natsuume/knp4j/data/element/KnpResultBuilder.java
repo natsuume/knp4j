@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class KnpResultParser {
+public class KnpResultBuilder {
   private static final char CLAUSE_SYMBOL = '*';
   private static final char PHRASE_SYMBOL = '+';
   private static final String EOS = "EOS";
@@ -24,7 +24,7 @@ public class KnpResultParser {
    * KNPの解析結果からParserを生成する.
    * @param results 解析結果文字列リスト
    */
-  public KnpResultParser(List<String> results) {
+  public KnpResultBuilder(List<String> results) {
     this.rawData = results;
     this.isValid = isValid(results);
     if (!isValid) {
@@ -39,8 +39,8 @@ public class KnpResultParser {
   }
 
   private void parseResults(List<String> results) {
-    KnpClauseParser clauseParser = null;
-    KnpPhraseParser phraseParser = null;
+    KnpClauseBuilder clauseParser = null;
+    KnpPhraseBuilder phraseParser = null;
 
     for (String line : results) {
       switch (line.charAt(0)) {
@@ -60,14 +60,14 @@ public class KnpResultParser {
             knpClauses.add(clause);
             phraseParser = null;
           }
-          clauseParser = new KnpClauseParser(line);
+          clauseParser = new KnpClauseBuilder(line);
           break;
         case PHRASE_SYMBOL:
           if (phraseParser != null) {
             var phrase = phraseParser.build();
             clauseParser.addPhrase(phrase);
           }
-          phraseParser = new KnpPhraseParser(line);
+          phraseParser = new KnpPhraseBuilder(line);
           break;
         default:
           if (line.equals(EOS)) {
@@ -85,7 +85,7 @@ public class KnpResultParser {
             knpClauses.add(clause);
             break;
           }
-          var morpheme = new KnpMorphemeParser(line).build();
+          var morpheme = new KnpMorphemeBuilder(line).build();
           phraseParser.addMorpheme(morpheme);
       }
     }

@@ -3,7 +3,7 @@ package dev.natsuume.knp4j.data.element;
 import dev.natsuume.knp4j.data.DetailPartOfSpeech;
 import dev.natsuume.knp4j.data.MajorPartOfSpeech;
 
-public class KnpMorphemeParser extends KnpElementParser {
+public class KnpMorphemeBuilder extends KnpElementBuilder {
   private static final int SURFACE_FORM_IDX = 0;
   private static final int READING_FORM_IDX = 1;
   private static final int BASE_FORM_IDX = 2;
@@ -24,7 +24,7 @@ public class KnpMorphemeParser extends KnpElementParser {
    * 形態素単位の解析結果文字列からインスタンスを生成する.
    * @param line 形態素解析結果
    */
-  public KnpMorphemeParser(String line) {
+  public KnpMorphemeBuilder(String line) {
     super(line);
     if (!info.isMorpheme()) {
       throw new IllegalArgumentException("This Content is not Morpheme.");

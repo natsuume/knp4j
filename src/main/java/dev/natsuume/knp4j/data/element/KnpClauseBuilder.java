@@ -3,26 +3,26 @@ package dev.natsuume.knp4j.data.element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnpClauseParser extends KnpElementParser {
+public class KnpClauseBuilder extends KnpElementBuilder {
   List<KnpPhrase> phrases = new ArrayList<>();
   List<KnpClause> dependencies = new ArrayList<>();
 
 
-  public KnpClauseParser(String line) {
+  public KnpClauseBuilder(String line) {
     super(line);
   }
 
-  public KnpClauseParser addPhrases(List<KnpPhrase> phrases) {
+  public KnpClauseBuilder addPhrases(List<KnpPhrase> phrases) {
     this.phrases.addAll(phrases);
     return this;
   }
 
-  public KnpClauseParser addPhrase(KnpPhrase phrase) {
+  public KnpClauseBuilder addPhrase(KnpPhrase phrase) {
     this.phrases.add(phrase);
     return this;
   }
 
-  public KnpClauseParser addDependencyClauses(List<KnpClause> dependencies) {
+  public KnpClauseBuilder addDependencyClauses(List<KnpClause> dependencies) {
     this.dependencies.addAll(dependencies);
     return this;
   }

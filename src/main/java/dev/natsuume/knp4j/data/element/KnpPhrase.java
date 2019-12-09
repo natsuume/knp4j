@@ -19,7 +19,7 @@ public class KnpPhrase implements KnpParentNode {
   private final DependencyTarget dependencyTarget;
   private final List<KnpFeature> features;
 
-  KnpPhrase(KnpPhraseParser parser) {
+  KnpPhrase(KnpPhraseBuilder parser) {
     this.morphemes = parser.morphemes;
     this.idx = parser.idx;
     this.dependencyTarget = parser.dependencyTarget;

@@ -1,8 +1,7 @@
 package dev.natsuume.knp4j.wrapper;
 
 import dev.natsuume.knp4j.data.JumanResult;
-import dev.natsuume.knp4j.data.define.KnpResult;
-import dev.natsuume.knp4j.data.element.KnpResultParser;
+import dev.natsuume.knp4j.parser.ResultParser;
 import dev.natsuume.knp4j.process.ProcessExecutor;
 import dev.natsuume.knp4j.process.ProcessManager;
 import dev.natsuume.knp4j.process.builder.ProcessExecutorBuilder;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class KnpWrapper {
+public class KnpWrapper<OutputT> {
   private static final String NEW_LINE_REGEX = "(\r\n|\n|\r)";
   private static final String INVALID_INPUT_REGEX = "[\\s\\S]*[\\+\\*][\\s\\S]*";
   private final ProcessInitInfo jumanInitInfo;
@@ -22,7 +21,8 @@ public class KnpWrapper {
   private final List<String> knpCommnad;
   private final int retryNum;
   private ProcessManager<String, JumanResult> jumanManager;
-  private ProcessManager<JumanResult, KnpResult> knpManager;
+  private ProcessManager<JumanResult, OutputT> knpManager;
+  private ResultParser<OutputT> resultParser;
 
   /**
    * KnpWrapperのインスタンスを生成する.
@@ -31,15 +31,20 @@ public class KnpWrapper {
    * @param knpInitInfo KNP設定
    * @param retryNum 解析時、エラー等で失敗した際に再試行する回数
    */
-  public KnpWrapper(ProcessInitInfo jumanInitInfo, ProcessInitInfo knpInitInfo, int retryNum) {
+  public KnpWrapper(
+      ProcessInitInfo jumanInitInfo,
+      ProcessInitInfo knpInitInfo,
+      int retryNum,
+      ResultParser<OutputT> resultParser) {
     this.jumanInitInfo = jumanInitInfo;
     this.knpInitInfo = knpInitInfo;
     this.jumanCommand = jumanInitInfo.getCommand();
     this.knpCommnad = knpInitInfo.getCommand();
     this.retryNum = retryNum;
+    this.resultParser = resultParser;
 
     this.jumanManager = startJumanManager();
-    this.knpManager = startKnpManager();
+    this.knpManager = startKnpManager(resultParser::parse);
   }
 
   private ProcessManager<String, JumanResult> startJumanManager() {
@@ -49,8 +54,8 @@ public class KnpWrapper {
         () -> instantiateProcessExecutor(jumanCommand, Function.identity(), JumanResult::new));
   }
 
-  private ProcessManager<JumanResult, KnpResult> startKnpManager() {
-    Function<List<String>, KnpResult> outputFunction = list -> new KnpResultParser(list).build();
+  private ProcessManager<JumanResult, OutputT> startKnpManager(
+      Function<List<String>, OutputT> outputFunction) {
     return new ProcessManager<>(
         knpInitInfo.getMaxNum(),
         knpInitInfo.getStartNum(),
@@ -74,29 +79,28 @@ public class KnpWrapper {
    * @param input 入力文字列
    * @return 解析結果のリスト(順序は保証されない)
    */
-  public List<KnpResult> analyze(String input) {
+  public List<OutputT> analyze(String input) {
+    var invalidResult = resultParser.getInvalidResult();
     return Arrays.stream(input.split(NEW_LINE_REGEX))
-        .parallel()
-        .map(
-            text ->
-                text.matches(INVALID_INPUT_REGEX)
-                    ? KnpResult.INVALID_RESULT
-                    : analyze(jumanManager, text, 0)
-                        .flatMapTry(result -> analyze(knpManager, result, 0))
-                        .getOrElseGet(exception -> KnpResult.INVALID_RESULT))
+        .map(text -> text.matches(INVALID_INPUT_REGEX) ? invalidResult : analyzeText(input))
         .collect(Collectors.toList());
   }
 
   private <InputT, OutputT> Try<OutputT> analyze(
       ProcessManager<InputT, OutputT> processManager, InputT input, int tryCount) {
     Try<OutputT> result = Try.success(input).mapTry(processManager::exec);
-    System.out.println(tryCount + ": " + input);
 
     if (result.isFailure() && tryCount < retryNum) {
       result = analyze(processManager, input, tryCount + 1);
     }
 
     return result;
+  }
+
+  private OutputT analyzeText(String input) {
+    return analyze(jumanManager, input, 0)
+        .flatMapTry(result -> analyze(knpManager, result, 0))
+        .getOrElseGet(exception -> resultParser.getInvalidResult());
   }
 
   /**
