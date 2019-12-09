@@ -103,6 +103,6 @@ KnpResultは下記メソッドを持ちます。
 
 これらのライセンス条項は[LICENSE](LICENSE)にあります。
 
-このソフトウェアはソースコードのFormatにcheckstyle(https://github.com/checkstyle/checkstyle)のgoogle_checks.xmlを利用しています([config/google-java-format.xml](config/google-java-format.xml))。  
+このソフトウェアはソースコードのFormatにcheckstyle(https://github.com/checkstyle/checkstyle)のgoogle_checks.xmlを利用しています[config/google-java-format.xml](config/google-java-format.xml)。  
 上記ファイルのライセンス条項は[checkstyle_LICENSE](config/checkstyle_LICENSE)にあります。
 
