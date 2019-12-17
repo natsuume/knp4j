@@ -1,10 +1,12 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'maven'
+    id 'signing'
 }
 
-group 'dev.natsuume.knp4j'
-version '1.0-SNAPSHOT'
+group 'dev.natsuume'
+version '1.0.0'
 
 sourceCompatibility = 1.12
 
@@ -40,4 +42,70 @@ test {
         exceptionFormat "full"
     }
     workingDir rootDir
+}
+
+task javadocJar(type: Jar) {
+    classifier 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'knp4j'
+                packaging 'jar'
+                artifactId 'knp4j'
+
+                description 'This is the wrapper that call KNP( Japanese morpheme, dependency, case analyzer ) in Java.'
+                url 'https://github.com/Natsuume/knp4j.git'
+
+                scm {
+                    connection 'scm:git:https://github.com/Natsuume/knp4j.git'
+                    developerConnection 'scm:git:https://github.com/Natsuume/knp4j.git'
+                    url 'https://github.com/Natsuume/knp4j'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'natsuume'
+                        name 'natsuume'
+                        email 'natsuume@natsuume.dev'
+                    }
+                }
+            }
+        }
+    }
 }
