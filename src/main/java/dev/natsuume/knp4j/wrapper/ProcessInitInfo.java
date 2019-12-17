@@ -22,7 +22,7 @@ public class ProcessInitInfo {
 
   /**
    * コマンドを返す.
-   * @return
+   * @return コマンド
    */
   public List<String> getCommand() {
     return new ArrayList<>(command);
@@ -30,7 +30,7 @@ public class ProcessInitInfo {
 
   /**
    * 最大実行数を返す.
-   * @return
+   * @return 最大実行数
    */
   public int getMaxNum() {
     return maxNum;

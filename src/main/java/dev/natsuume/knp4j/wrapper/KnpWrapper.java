@@ -30,6 +30,7 @@ public class KnpWrapper<OutputT> {
    * @param jumanInitInfo JUMAN設定
    * @param knpInitInfo KNP設定
    * @param retryNum 解析時、エラー等で失敗した際に再試行する回数
+   * @param resultParser 解析結果の出力parser
    */
   public KnpWrapper(
       ProcessInitInfo jumanInitInfo,
@@ -62,15 +63,15 @@ public class KnpWrapper<OutputT> {
         () -> instantiateProcessExecutor(knpCommnad, JumanResult::toKnpInput, outputFunction));
   }
 
-  private <InputT, OutputT> ProcessExecutor<InputT, OutputT> instantiateProcessExecutor(
+  private <InputT, OutputT> Try<ProcessExecutor<InputT, OutputT>> instantiateProcessExecutor(
       List<String> command,
       Function<InputT, String> inputConverter,
       Function<List<String>, OutputT> outputConverter) {
-    return new ProcessExecutorBuilder<InputT, OutputT>()
+    return Try.success(new ProcessExecutorBuilder<InputT, OutputT>()
         .setCommand(command)
         .setInputConverter(inputConverter)
-        .setOutputConverter(outputConverter)
-        .start();
+        .setOutputConverter(outputConverter))
+        .mapTry(builder -> builder.start());
   }
 
   /**
