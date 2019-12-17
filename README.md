@@ -1,6 +1,22 @@
 # KNP4J
 JUMAN(JUMAN++)、KNPのプロセスをJavaから実行して結果を取得するライブラリです。  
-Mavenリポジトリ上で公開予定ですが、現在は未対応です。
+
+# Maven/Gradle
+https://search.maven.org/artifact/dev.natsuume/knp4j
+
+* Maven
+```
+<dependency>
+  <groupId>dev.natsuume</groupId>
+  <artifactId>knp4j</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+* Gradle
+```
+implementation 'dev.natsuume:knp4j:1.0.0'
+```
 
 # 使い方
 
