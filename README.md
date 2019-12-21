@@ -7,15 +7,15 @@ https://search.maven.org/artifact/dev.natsuume/knp4j
 * Maven
 ```
 <dependency>
-  <groupId>dev.natsuume</groupId>
+  <groupId>dev.natsuume.knp4j</groupId>
   <artifactId>knp4j</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
 * Gradle
 ```
-implementation 'dev.natsuume:knp4j:1.0.0'
+implementation 'dev.natsuume.knp4j:knp4j:1.0.1'
 ```
 
 # 使い方
