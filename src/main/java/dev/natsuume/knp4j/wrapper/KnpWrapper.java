@@ -67,15 +67,18 @@ public class KnpWrapper<OutputT> {
       List<String> command,
       Function<InputT, String> inputConverter,
       Function<List<String>, OutputT> outputConverter) {
-    return Try.success(new ProcessExecutorBuilder<InputT, OutputT>()
-        .setCommand(command)
-        .setInputConverter(inputConverter)
-        .setOutputConverter(outputConverter))
+    return Try.success(
+            new ProcessExecutorBuilder<InputT, OutputT>()
+                .setCommand(command)
+                .setInputConverter(inputConverter)
+                .setOutputConverter(outputConverter))
         .mapTry(builder -> builder.start());
   }
 
   /**
-   * 入力文字列を解析した結果を返す. 解析に失敗した場合はKnpResult.INVALID_RESULTを返す. 改行が含まれる場合それぞれ独立して解析した結果を返す.
+   * 入力文字列を解析した結果を返す. <br>
+   * 解析に失敗した場合はKnpResult.INVALID_RESULTを返す.<br>
+   * 改行が含まれる場合それぞれ独立して解析した結果を返す.
    *
    * @param input 入力文字列
    * @return 解析結果のリスト(順序は保証されない)

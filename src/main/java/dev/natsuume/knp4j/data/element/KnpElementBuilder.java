@@ -8,14 +8,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class KnpElementBuilder {
+  static final String BASIC_INFO_DELIMITER = " ";
   private static final char CLAUSE_PREFIX = '*';
   private static final char PHRASE_PREFIX = '+';
   private static final int BASIC_INFO_IDX_POSITION = 1;
   private static final int BASIC_INFO_DEPENDENCY_POSITION = 2;
   private static final int NO_IDX = -1;
-
   private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+?(?=>)");
-  static final String BASIC_INFO_DELIMITER = " ";
   private static final String EOS = "EOS";
 
   final int idx;

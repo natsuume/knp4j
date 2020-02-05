@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public class ProcessExecutorImpl<InputT, OutputT> implements ProcessExecutor<InputT, OutputT> {
+  private static final String NEW_LINE = "\n";
   private final Process process;
   private final Function<InputT, String> inputConverter;
   private final Function<List<String>, OutputT> outputConverter;
@@ -68,7 +69,7 @@ public class ProcessExecutorImpl<InputT, OutputT> implements ProcessExecutor<Inp
     BufferedWriter bufferedWriter =
         new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
     bufferedWriter.write(text);
-    bufferedWriter.write("\n"); // BufferedWriter::newLineは改行コードが環境で変わるのでNG
+    bufferedWriter.write(NEW_LINE); // BufferedWriter::newLineは改行コードが環境で変わるのでNG
     bufferedWriter.flush();
   }
 

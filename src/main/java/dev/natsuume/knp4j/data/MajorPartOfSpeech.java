@@ -27,6 +27,7 @@ public enum MajorPartOfSpeech {
 
   /**
    * 日本語文字列に該当する品詞を返す.
+   *
    * @param japaneseForm 日本語の品詞文字列
    * @return 該当する品詞. 該当するものが存在しない場合はMajorPartOfSpeech.NONEを返す
    */
@@ -40,6 +41,7 @@ public enum MajorPartOfSpeech {
 
   /**
    * この品詞を表す日本語文字列を返す.
+   *
    * @return 品詞を表す日本語文字列
    */
   public String getJapaneseForm() {

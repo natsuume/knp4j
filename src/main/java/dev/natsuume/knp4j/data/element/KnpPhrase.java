@@ -6,14 +6,11 @@ import dev.natsuume.knp4j.data.define.KnpFeature;
 import dev.natsuume.knp4j.data.define.KnpParentNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class KnpPhrase implements KnpParentNode {
-  private static final Pattern FEATURE_PATTERN = Pattern.compile("(?<=<).+(?=>)");
-  private static final String INFO_SPLIT_PATTERN = " (?=<)";
-  private static final String IDX_INFO_SEPARATOR = " ";
   private final List<KnpMorpheme> morphemes;
   private final int idx;
   private final DependencyTarget dependencyTarget;
@@ -68,5 +65,25 @@ public class KnpPhrase implements KnpParentNode {
   @Override
   public List<KnpMorpheme> getMorphemes() {
     return new ArrayList<>(morphemes);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    KnpPhrase knpPhrase = (KnpPhrase) o;
+    return idx == knpPhrase.idx
+        && Objects.equals(morphemes, knpPhrase.morphemes)
+        && Objects.equals(dependencyTarget, knpPhrase.dependencyTarget)
+        && Objects.equals(features, knpPhrase.features);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(morphemes, idx, dependencyTarget, features);
   }
 }

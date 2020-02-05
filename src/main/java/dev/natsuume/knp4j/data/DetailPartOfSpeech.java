@@ -49,15 +49,6 @@ public enum DetailPartOfSpeech {
   }
 
   /**
-   * 日本語文字列を返す.
-   *
-   * @return 品詞の日本語文字列
-   */
-  public String getJapaneseForm() {
-    return japaneseForm;
-  }
-
-  /**
    * 入力の文字列に一致する品詞を取得する.
    *
    * @param japaneseForm 品詞の日本語文字列
@@ -69,5 +60,14 @@ public enum DetailPartOfSpeech {
         .filter(pos -> pos.japaneseForm.equals(japaneseForm))
         .findAny()
         .orElse(NONE);
+  }
+
+  /**
+   * 日本語文字列を返す.
+   *
+   * @return 品詞の日本語文字列
+   */
+  public String getJapaneseForm() {
+    return japaneseForm;
   }
 }

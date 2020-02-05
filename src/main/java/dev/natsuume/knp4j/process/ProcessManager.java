@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -21,7 +19,6 @@ public class ProcessManager<InputT, OutputT> {
   private static final int DEFAULT_FIRST_PROCESS_NUM = 1;
   private final int maxProcessNum;
   private final Supplier<Try<ProcessExecutor<InputT, OutputT>>> processSupplier;
-  private final ExecutorService executorService = Executors.newCachedThreadPool();
   private final BlockingDeque<ProcessExecutor<InputT, OutputT>> processExecutors;
   private final Set<ProcessExecutor<InputT, OutputT>> allProcesses;
   private boolean isAlive = true;
@@ -49,8 +46,8 @@ public class ProcessManager<InputT, OutputT> {
   /**
    * constructor.
    *
-   * @param maxProcessNum 同時に実行する最大プロセス数{@literal (n > 0)}
-   * @param firstProcessNum インスタンス生成時に実行するプロセス数{@literal (0 < n < maxProcessNum)}
+   * @param maxProcessNum 同時に実行する最大プロセス数{@literal n > 0}
+   * @param firstProcessNum インスタンス生成時に実行するプロセス数{@literal 0 < n < maxProcessNum}
    * @param processSupplier 実行するプロセスのSupplier
    */
   public ProcessManager(

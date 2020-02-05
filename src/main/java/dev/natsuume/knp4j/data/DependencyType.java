@@ -16,6 +16,7 @@ public enum DependencyType {
 
   /**
    * 係り受けタイプを文字列から取得する.
+   *
    * @param value 係り受けタイプを表す文字列
    * @return 該当する係り受けタイプ. 該当するものがなければnullを返す
    */
