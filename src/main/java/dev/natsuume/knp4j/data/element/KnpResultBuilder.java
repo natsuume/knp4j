@@ -22,73 +22,66 @@ public class KnpResultBuilder {
 
   /**
    * KNPの解析結果からParserを生成する.
+   *
    * @param results 解析結果文字列リスト
    */
   public KnpResultBuilder(List<String> results) {
     this.rawData = results;
     this.isValid = isValid(results);
+
     if (!isValid) {
       return;
     }
+
     var scoreString =
         results.get(META_DATA_IDX)
             .split(BASIC_INFO_DELIMITER)[SCORE_IDX]
             .split(SCORE_DELIMITER)[SCORE_VALUE_IDX];
+
     this.score = Double.parseDouble(scoreString);
-    parseResults(results.subList(1, results.size()));
+    initialize(results.subList(1, results.size()));
   }
 
-  private void parseResults(List<String> results) {
-    KnpClauseBuilder clauseParser = null;
-    KnpPhraseBuilder phraseParser = null;
+  private void initialize(List<String> results) {
+    KnpClauseBuilder clauseBuilder = null;
+    KnpPhraseBuilder phraseBuilder = null;
 
     for (String line : results) {
       switch (line.charAt(0)) {
         case CLAUSE_SYMBOL:
-          if (clauseParser != null) {
-            final int idx = clauseParser.idx;
-            var dependencies =
-                knpClauses.stream()
-                    .filter(clause -> clause.getDependencyTargetIdx() == idx)
-                    .collect(Collectors.toList());
-            var clause =
-                clauseParser
-                    .addPhrase(phraseParser.build())
-                    .addDependencyClauses(dependencies)
-                    .build();
-
-            knpClauses.add(clause);
-            phraseParser = null;
+          if (clauseBuilder != null) {
+            buildClause(clauseBuilder, phraseBuilder);
+            phraseBuilder = null;
           }
-          clauseParser = new KnpClauseBuilder(line);
+          clauseBuilder = new KnpClauseBuilder(line);
           break;
         case PHRASE_SYMBOL:
-          if (phraseParser != null) {
-            var phrase = phraseParser.build();
-            clauseParser.addPhrase(phrase);
+          if (phraseBuilder != null) {
+            clauseBuilder.addPhrase(phraseBuilder.build());
           }
-          phraseParser = new KnpPhraseBuilder(line);
+          phraseBuilder = new KnpPhraseBuilder(line);
           break;
         default:
           if (line.equals(EOS)) {
-            final int idx = clauseParser.idx;
-            var dependencies =
-                knpClauses.stream()
-                    .filter(clause -> clause.getDependencyTargetIdx() == idx)
-                    .collect(Collectors.toList());
-            var clause =
-                clauseParser
-                    .addPhrase(phraseParser.build())
-                    .addDependencyClauses(dependencies)
-                    .build();
-
-            knpClauses.add(clause);
+            buildClause(clauseBuilder, phraseBuilder);
             break;
           }
           var morpheme = new KnpMorphemeBuilder(line).build();
-          phraseParser.addMorpheme(morpheme);
+          phraseBuilder.addMorpheme(morpheme);
       }
     }
+  }
+
+  private void buildClause(KnpClauseBuilder clauseBuilder, KnpPhraseBuilder phraseBuilder) {
+    final int idx = clauseBuilder.idx;
+    var dependencies =
+        knpClauses.stream()
+            .filter(clause -> clause.getDependencyTargetIdx() == idx)
+            .collect(Collectors.toList());
+    var clause =
+        clauseBuilder.addPhrase(phraseBuilder.build()).addDependencyClauses(dependencies).build();
+
+    knpClauses.add(clause);
   }
 
   private boolean isValid(List<String> results) {
@@ -101,6 +94,7 @@ public class KnpResultBuilder {
 
   /**
    * 情報を構造化したKnpResultインスタンスを返す.
+   *
    * @return 解析結果のインスタンス
    */
   public KnpResult build() {

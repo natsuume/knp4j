@@ -1,6 +1,5 @@
 package dev.natsuume.knp4j.process;
 
-import io.vavr.control.Try;
 import java.io.IOException;
 
 public interface ProcessExecutor<InputT, OutputT> {

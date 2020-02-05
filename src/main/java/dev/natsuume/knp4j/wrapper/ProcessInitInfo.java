@@ -10,6 +10,7 @@ public class ProcessInitInfo {
 
   /**
    * constructor.
+   *
    * @param command コマンド
    * @param maxNum 最大実行数
    * @param startNum 初期実行数
@@ -22,6 +23,7 @@ public class ProcessInitInfo {
 
   /**
    * コマンドを返す.
+   *
    * @return コマンド
    */
   public List<String> getCommand() {
@@ -30,6 +32,7 @@ public class ProcessInitInfo {
 
   /**
    * 最大実行数を返す.
+   *
    * @return 最大実行数
    */
   public int getMaxNum() {
@@ -38,6 +41,7 @@ public class ProcessInitInfo {
 
   /**
    * 初期実行数を返す.
+   *
    * @return 初期実行数
    */
   public int getStartNum() {

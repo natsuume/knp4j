@@ -6,14 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 import java.util.function.Consumer;
 
-public class ProcessStreamThread implements Runnable {
+class ProcessStreamThread implements Runnable {
   private final InputStream inputStream;
   private final Consumer<List<String>> outputConsumer;
 
-  public ProcessStreamThread(InputStream inputStream, Consumer<List<String>> outputConsumer) {
+  ProcessStreamThread(InputStream inputStream, Consumer<List<String>> outputConsumer) {
     this.inputStream = inputStream;
     this.outputConsumer = outputConsumer;
   }

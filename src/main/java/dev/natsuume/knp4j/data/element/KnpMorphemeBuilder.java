@@ -22,6 +22,7 @@ public class KnpMorphemeBuilder extends KnpElementBuilder {
 
   /**
    * 形態素単位の解析結果文字列からインスタンスを生成する.
+   *
    * @param line 形態素解析結果
    */
   public KnpMorphemeBuilder(String line) {
@@ -41,6 +42,7 @@ public class KnpMorphemeBuilder extends KnpElementBuilder {
 
   /**
    * 現在の内容で形態素インスタンスを生成する.
+   *
    * @return 形態素インスタンス
    */
   public KnpMorpheme build() {

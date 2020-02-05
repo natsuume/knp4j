@@ -3,6 +3,7 @@ package dev.natsuume.knp4j.data.element;
 import dev.natsuume.knp4j.data.define.KnpResult;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class KnpResultImpl implements KnpResult {
@@ -49,6 +50,7 @@ public class KnpResultImpl implements KnpResult {
 
   /**
    * 文末の文節を返す.
+   *
    * @return 文末の文節
    */
   public KnpClause getRootNode() {
@@ -62,6 +64,7 @@ public class KnpResultImpl implements KnpResult {
 
   /**
    * スコアを返す.
+   *
    * @return スコア
    */
   public double getScore() {
@@ -71,5 +74,24 @@ public class KnpResultImpl implements KnpResult {
   @Override
   public boolean isValid() {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    KnpResultImpl knpResult = (KnpResultImpl) o;
+    return Double.compare(knpResult.score, score) == 0
+        && Objects.equals(rawData, knpResult.rawData)
+        && Objects.equals(knpClauses, knpResult.knpClauses);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(rawData, knpClauses, score);
   }
 }

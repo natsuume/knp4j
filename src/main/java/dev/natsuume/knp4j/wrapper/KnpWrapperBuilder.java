@@ -1,6 +1,5 @@
 package dev.natsuume.knp4j.wrapper;
 
-import dev.natsuume.knp4j.parser.KnpResultParser;
 import dev.natsuume.knp4j.parser.ResultParser;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +37,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * KnpWrapperを作成し、プロセスを実行する.
+   *
    * @return KnpWrapper
    */
   public KnpWrapper<OutputT> start() {
@@ -47,8 +47,9 @@ public class KnpWrapperBuilder<OutputT> {
   }
 
   /**
-   * Jumanプロセスを実行するコマンドを設定する.
+   * Jumanプロセスを実行するコマンドを設定する. <br>
    * デフォルトはList.of("bash", "-c", "jumanpp")と等価
+   *
    * @param command コマンド
    * @return このインスタンス
    */
@@ -58,9 +59,10 @@ public class KnpWrapperBuilder<OutputT> {
   }
 
   /**
-   * KNPプロセスを実行するコマンドを設定する.
-   * デフォルトはList.of("bash", "-c", "knp -tab -print-num -anaphora")と等価
+   * KNPプロセスを実行するコマンドを設定する. <br>
+   * デフォルトはList.of("bash", "-c", "knp -tab -print-num -anaphora")と等価<br>
    * -tab, -print-num, -anaphoraオプションが現在は必須
+   *
    * @param command コマンド
    * @return このインスタンス
    */
@@ -71,6 +73,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * Jumanのプロセスの最大起動数を設定する.
+   *
    * @param jumanMaxNum Jumanの最大同時実行数(デフォルトは1)
    * @return このインスタンス
    */
@@ -81,6 +84,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * 初期化時のJumanの実行プロセス数を設定する.
+   *
    * @param jumanStartNum Jumanの初期実行数(デフォルトは1)
    * @return このインスタンス
    */
@@ -91,6 +95,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * KNPのプロセスの最大起動数を設定する.
+   *
    * @param knpMaxNum KNPの最大同時実行数(デフォルトは1)
    * @return このインスタンス
    */
@@ -101,6 +106,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * 初期化時のKNP実行プロセス数を設定する.
+   *
    * @param knpStartNum KNPの初期実行数(デフォルトは1)
    * @return このインスタンス
    */
@@ -111,6 +117,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * 解析に失敗した際に再試行する回数を設定する.
+   *
    * @param retryNum 再試行数(デフォルトは0)
    * @return このインスタンス
    */
@@ -121,6 +128,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * KNPの出力を任意のオブジェクトに変換するParserを設定する.
+   *
    * @param resultParser KNPの出力Parser
    * @return このインスタンス
    */
