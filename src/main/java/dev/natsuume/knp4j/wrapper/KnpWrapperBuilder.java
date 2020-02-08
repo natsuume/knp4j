@@ -7,7 +7,7 @@ import java.util.List;
 public class KnpWrapperBuilder<OutputT> {
   private static final String[] DEFAULT_JUMAN_COMMAND = {"bash", "-c", "jumanpp"};
   private static final String[] DEFAULT_KNP_COMMAND = {
-    "bash", "-c", "knp -tab -print-num -anaphora"
+    "bash", "-c", "knp -tab -print-num"
   };
   private static final int DEFAULT_MAX_PROCESS_NUM = 1;
   private static final int DEFAULT_FIRST_PROCESS_NUM = 1;
@@ -60,7 +60,7 @@ public class KnpWrapperBuilder<OutputT> {
 
   /**
    * KNPプロセスを実行するコマンドを設定する. <br>
-   * デフォルトはList.of("bash", "-c", "knp -tab -print-num -anaphora")と等価<br>
+   * デフォルトはList.of("bash", "-c", "knp -tab -print-num")と等価<br>
    * -tab, -print-num, -anaphoraオプションが現在は必須
    *
    * @param command コマンド
