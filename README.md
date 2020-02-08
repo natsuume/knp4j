@@ -9,13 +9,13 @@ https://search.maven.org/artifact/dev.natsuume/knp4j
 <dependency>
   <groupId>dev.natsuume.knp4j</groupId>
   <artifactId>knp4j</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
 * Gradle
 ```
-implementation 'dev.natsuume.knp4j:knp4j:1.0.1'
+implementation 'dev.natsuume.knp4j:knp4j:1.1.1'
 ```
 
 # 使い方
@@ -122,3 +122,12 @@ KnpResultは下記メソッドを持ちます。
 このソフトウェアはソースコードのFormatに[checkstyle](https://github.com/checkstyle/checkstyle)の[google_checks.xml](config/google_checks.xml)を利用しています。  
 上記ファイルのライセンス条項は[checkstyle_LICENSE](config/checkstyle_LICENSE)にあります。
 
+# 更新履歴
+* 2020/02/08: **ver.1.1.1 update**
+  * KnpWrapperBuilderのデフォルトKnpコマンドから`-anaphora`オプションを削除
+* 2020/02/05: **ver.1.1.0 update**
+  * KnpClause, KnpPhraseが任意のfeatureを含んでいるかの判定を行うメソッドを追加
+  * 全体のコードフォーマットを統一
+  * 一部javadocコメントの追加・修正
+  * 使用されていないprivateなメソッドやフィールドを削除
+* 2019/12/17: **ver.1.0.0 release**
