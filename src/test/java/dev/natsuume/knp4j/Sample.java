@@ -10,6 +10,12 @@ import java.util.stream.IntStream;
 
 public class Sample {
   public static void main(String[] args) {
+    testAnalyzing();
+//    testPerformance();
+    System.exit(0);
+  }
+
+  private static void testPerformance() {
     long time = System.currentTimeMillis();
 
     KnpWrapperBuilder<KnpResult> knpWrapperBuilder = new KnpWrapperBuilder<>();
@@ -35,6 +41,25 @@ public class Sample {
             .collect(Collectors.toList());
 
     System.out.println("time: " + (System.currentTimeMillis() - time));
-    System.exit(0);
+  }
+
+  private static void testAnalyzing() {
+    List<String> tests = List.of(
+    );
+    KnpWrapperBuilder<KnpResult> knpWrapperBuilder = new KnpWrapperBuilder<>();
+    int jumanMaxNum = 1;
+    int knpMaxNum = 5;
+    KnpWrapper<KnpResult> wrapper =
+        knpWrapperBuilder
+            .setJumanMaxNum(jumanMaxNum)
+            .setKnpMaxNum(knpMaxNum)
+            .setResultParser(new KnpResultParser())
+            .start();
+
+    tests.stream()
+        .map(wrapper::analyze)
+        .flatMap(List::stream)
+        .map(KnpResult::getRawResultData)
+        .forEach(System.out::println);
   }
 }
