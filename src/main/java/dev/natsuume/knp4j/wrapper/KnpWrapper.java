@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class KnpWrapper<OutputT> {
   private static final String NEW_LINE_REGEX = "(\r\n|\n|\r)";
-  private static final String INVALID_INPUT_REGEX = "[\\s\\S]*[\\+\\*][\\s\\S]*";
+  private static final String INVALID_INPUT_REGEX = ".*[\\+\\*].*";
   private final ProcessInitInfo jumanInitInfo;
   private final ProcessInitInfo knpInitInfo;
   private final List<String> jumanCommand;
@@ -94,6 +94,7 @@ public class KnpWrapper<OutputT> {
       ProcessManager<InputT, OutputT> processManager, InputT input, int tryCount) {
     Try<OutputT> result = Try.success(input).mapTry(processManager::exec);
 
+
     if (result.isFailure() && tryCount < retryNum) {
       result = analyze(processManager, input, tryCount + 1);
     }
@@ -104,7 +105,10 @@ public class KnpWrapper<OutputT> {
   private OutputT analyzeText(String input) {
     return analyze(jumanManager, input, 0)
         .flatMapTry(result -> analyze(knpManager, result, 0))
-        .getOrElseGet(exception -> resultParser.getInvalidResult());
+        .getOrElseGet(exception -> {
+          exception.printStackTrace();
+          return resultParser.getInvalidResult();
+        });
   }
 
   /**

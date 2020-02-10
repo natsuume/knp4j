@@ -2,6 +2,7 @@ package dev.natsuume.knp4j.data.element;
 
 import dev.natsuume.knp4j.data.define.KnpResult;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,15 +11,15 @@ public class KnpResultBuilder {
   private static final char PHRASE_SYMBOL = '+';
   private static final String EOS = "EOS";
   private static final int META_DATA_IDX = 0;
-  private static final int SCORE_IDX = 4;
   private static final int SCORE_VALUE_IDX = 1;
   private static final String BASIC_INFO_DELIMITER = " ";
   private static final String SCORE_DELIMITER = ":";
+  private static final String SCORE_TEXT = "SCORE";
   private static final String IGNORE_CHARACTER = "#";
+  private final boolean isValid;
   List<String> rawData;
   double score;
   List<KnpClause> knpClauses = new ArrayList<>();
-  private boolean isValid;
 
   /**
    * KNPの解析結果からParserを生成する.
@@ -34,9 +35,12 @@ public class KnpResultBuilder {
     }
 
     var scoreString =
-        results.get(META_DATA_IDX)
-            .split(BASIC_INFO_DELIMITER)[SCORE_IDX]
-            .split(SCORE_DELIMITER)[SCORE_VALUE_IDX];
+        Arrays.stream(results.get(META_DATA_IDX).split(BASIC_INFO_DELIMITER))
+            .parallel()
+            .filter(text -> text.startsWith(SCORE_TEXT))
+            .findAny()
+            .map(text -> text.split(SCORE_DELIMITER)[SCORE_VALUE_IDX])
+            .orElseThrow();
 
     this.score = Double.parseDouble(scoreString);
     initialize(results.subList(1, results.size()));
