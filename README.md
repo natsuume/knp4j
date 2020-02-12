@@ -9,13 +9,13 @@ https://search.maven.org/artifact/dev.natsuume/knp4j
 <dependency>
   <groupId>dev.natsuume.knp4j</groupId>
   <artifactId>knp4j</artifactId>
-  <version>1.1.2</version>
+  <version>1.1.3</version>
 </dependency>
 ```
 
 * Gradle
 ```
-implementation 'dev.natsuume.knp4j:knp4j:1.1.2'
+implementation 'dev.natsuume.knp4j:knp4j:1.1.3'
 ```
 
 # 使い方
@@ -123,6 +123,8 @@ KnpResultは下記メソッドを持ちます。
 上記ファイルのライセンス条項は[checkstyle_LICENSE](config/checkstyle_LICENSE)にあります。
 
 # 更新履歴
+* 2020/02/12: **ver.1.1.3 update**
+  * MajorPartOfSpeechに助詞が定義されていなかったため、助詞を表す`POSTPOSITIONAL_PARTICLE`を追加
 * 2020/02/10: **ver.1.1.2 update**
   * 入力文に`#`が含まれる場合にKnpResultBuilderがparsingに失敗する問題を修正
 * 2020/02/08: **ver.1.1.1 update**
