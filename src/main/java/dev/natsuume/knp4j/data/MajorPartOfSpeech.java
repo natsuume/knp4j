@@ -8,6 +8,7 @@ public enum MajorPartOfSpeech {
   VERB("動詞"),
   ADJECTIVE("形容詞"),
   JUDGEMENT("判定詞"),
+  POSTPOSITIONAL_PARTICLE("助詞"),
   AUXILIARY_VERB("助動詞"),
   ADVERB("副詞"),
   PARTICLE("接続詞"),
